@@ -49,6 +49,8 @@ public class SpaceShipBehavior : MonoBehaviour
         {
             Vector2 force = transform.up * thrustForce;
             rb.AddForce(force);
+
+
         }
     }
 
