@@ -1,38 +1,58 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SphereBehavior : MonoBehaviour
 {
     [Header("Velocità")]
     [SerializeField] float speed = 10f;
-    [SerializeField] float force = 10f;
-    [SerializeField] bool isActive;
-    [SerializeField] SpriteRenderer sr;
-    [SerializeField] Rigidbody2D rb;
+    public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI winText;
+    int score = 0;
     //[SerializeField] Collider collider;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
+    [SerializeField] float horizontalInput;
+    float verticalInput;
+
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        
     }
 
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.A))
-        {
-            transform.position = new Vector3(speed, 0, 0) * Time.deltaTime + transform.position;
-        }
+        horizontalInput = Input.GetAxis("Horizontal");
+        verticalInput = Input.GetAxis("Vertical");
 
-        if (Input.GetKey(KeyCode.D))
+        //transform.position = new Vector3(horizontalInput, verticalInput, 0) * speed * Time.deltaTime + transform.position;
+        transform.Translate(new Vector3(horizontalInput, verticalInput,0)   * speed * Time.deltaTime);
+
+
+        if(Input.GetKeyDown(KeyCode.R))
         {
-            Debug.Log("A premuto");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log("Ho Preso una Monetina");
+        score++;
+        scoreText.text = "Score: " + score.ToString();
+        if (score >= 6)
+        {
+            winText.text = "You Win!";
+            winText.gameObject.SetActive(true);
+            //Time.timeScale = 0f; // Ferma il gioco
+        }
+        Destroy(collision.gameObject);
+    }
 
 
-   
+
+
 }

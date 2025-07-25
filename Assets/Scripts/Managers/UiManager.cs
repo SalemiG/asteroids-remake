@@ -5,8 +5,13 @@ using UnityEngine.SceneManagement;
 
 public class UiManager : MonoBehaviour
 {
+    float horizontalInput;
+    Vector2 mousePosition;
     private void Update()
     {
+        
+
+
         if (EventSystem.current.currentSelectedGameObject != null)
             EventSystem.current.SetSelectedGameObject(null);
     }

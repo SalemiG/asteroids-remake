@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class SpaceShipBehavior : MonoBehaviour
@@ -14,9 +15,23 @@ public class SpaceShipBehavior : MonoBehaviour
     private float nextFireTime = 0f;
     private float fireRate = 0.2f;
 
+    public AsteroidBehavior asteroid;
+
+    public Action OnDeath;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+    }
+
+    private void OnEnable()
+    {
+        asteroid.OnDeath += onAsteroidHit; // Subscribe to the asteroid's OnDeath event
+    }
+
+    private void OnDisable()
+    {
+        asteroid.OnDeath -= onAsteroidHit; // Unsubscribe from the asteroid's OnDeath event
     }
 
     void Update()
@@ -24,6 +39,7 @@ public class SpaceShipBehavior : MonoBehaviour
         HandleRotation();
         HandleThrust();
         ClampVelocity();
+        
         if (Input.GetKey(KeyCode.Space) && Time.time >= nextFireTime)
         {
             Shoot();
@@ -49,8 +65,6 @@ public class SpaceShipBehavior : MonoBehaviour
         {
             Vector2 force = transform.up * thrustForce;
             rb.AddForce(force);
-
-
         }
     }
 
@@ -64,11 +78,27 @@ public class SpaceShipBehavior : MonoBehaviour
 
     void Shoot()
     {
-            Instantiate(rocket, shootingPoint1.transform.position, shootingPoint1.transform.rotation);
-        
+        Instantiate(rocket, shootingPoint1.transform.position, shootingPoint1.transform.rotation);
     }
 
-    
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Asteroid"))
+        {
+            Debug.Log("Player hit by an asteroid!");
+            GameOver();
+        }
+    }
 
+    public void GameOver()
+    {
+        OnDeath?.Invoke();
+    }
+
+    void onAsteroidHit()
+    {
+        Debug.Log("Asteroid hit the player!");
+        
+    }
 
 }
